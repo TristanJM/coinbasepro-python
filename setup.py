@@ -24,7 +24,7 @@ setup(
     author='Daniel Paquin',
     author_email='dpaq34@gmail.com',
     license='MIT',
-    url='https://github.com/danpaquin/coinbasepro-python',
+    url='https://github.com/TristanJM/traider-market-making',
     packages=find_packages(),
     install_requires=install_requires,
     tests_require=tests_require,
@@ -35,8 +35,9 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     download_url='https://github.com/danpaquin/coinbasepro-python/archive/master.zip',
-    keywords=['gdax', 'gdax-api', 'orderbook', 'trade', 'bitcoin', 'ethereum', 'BTC', 'ETH', 'client', 'api', 'wrapper',
-              'exchange', 'crypto', 'currency', 'trading', 'trading-api', 'coinbase', 'pro', 'prime', 'coinbasepro'],
+    keywords=['gdax', 'gdax-api', 'orderbook', 'trade', 'bitcoin', 'ethereum', 'BTC',
+              'ETH', 'client', 'api', 'wrapper', 'exchange', 'crypto', 'currency',
+              'trading', 'trading-api', 'coinbase', 'pro', 'prime', 'coinbasepro'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -51,5 +52,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7'
     ],
 )
