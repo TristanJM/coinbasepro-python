@@ -46,6 +46,8 @@ class WebsocketClient:
         self.api_passphrase = api_passphrase
         self.should_print = should_print
         self.mongo_collection = mongo_collection
+        self.thread_name = thread_name
+        self.keepalive_thread_name = keepalive_thread_name
 
     def start(self):
         def _go():
@@ -55,8 +57,8 @@ class WebsocketClient:
 
         self.stop = False
         self.on_open()
-        self.thread = Thread(target=_go, name=thread_name)
-        self.keepalive = Thread(target=self._keepalive, name=keeaplive_thread_name)
+        self.thread = Thread(target=_go, name=self.thread_name)
+        self.keepalive = Thread(target=self._keepalive, name=self.keeaplive_thread_name)
         self.thread.start()
 
     def _connect(self):
