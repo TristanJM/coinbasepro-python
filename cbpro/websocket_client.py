@@ -58,7 +58,7 @@ class WebsocketClient:
         self.stop = False
         self.on_open()
         self.thread = Thread(target=_go, name=self.thread_name)
-        self.keepalive = Thread(target=self._keepalive, name=self.keeaplive_thread_name)
+        self.keepalive = Thread(target=self._keepalive, name=self.keepalive_thread_name)
         self.thread.start()
 
     def _connect(self):
