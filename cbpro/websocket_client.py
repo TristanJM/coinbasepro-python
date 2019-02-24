@@ -17,9 +17,21 @@ from pymongo import MongoClient
 from cbpro.cbpro_auth import get_auth_headers
 
 
-class WebsocketClient(object):
-    def __init__(self, url="wss://ws-feed.pro.coinbase.com", products=None, message_type="subscribe", mongo_collection=None,
-                 should_print=True, auth=False, api_key="", api_secret="", api_passphrase="", channels=None):
+class WebsocketClient:
+    def __init__(self,
+                 url="wss://ws-feed.pro.coinbase.com",
+                 products=None,
+                 message_type="subscribe",
+                 mongo_collection=None,
+                 should_print=True,
+                 auth=False,
+                 api_key="",
+                 api_secret="",
+                 api_passphrase="",
+                 channels=None,
+                 thread_name='WebsocketClient',
+                 keepalive_thread_name='WebsocketClientKeepAlive'):
+
         self.url = url
         self.products = products
         self.channels = channels
@@ -34,6 +46,8 @@ class WebsocketClient(object):
         self.api_passphrase = api_passphrase
         self.should_print = should_print
         self.mongo_collection = mongo_collection
+        self.thread_name = thread_name
+        self.keepalive_thread_name = keepalive_thread_name
 
     def start(self):
         def _go():
@@ -43,8 +57,8 @@ class WebsocketClient(object):
 
         self.stop = False
         self.on_open()
-        self.thread = Thread(target=_go)
-        self.keepalive = Thread(target=self._keepalive)
+        self.thread = Thread(target=_go, name=self.thread_name)
+        self.keepalive = Thread(target=self._keepalive, name=self.keepalive_thread_name)
         self.thread.start()
 
     def _connect(self):
