@@ -17,18 +17,22 @@ from pymongo import MongoClient
 from cbpro.cbpro_auth import get_auth_headers
 
 
+# poly: the arg to WebsocketClient should be a Connection object.
+# in case we need custom per exchange logic, it is better to handle it in a separate place.
+# WebsocketClinet(ExchangeConnection(url='..', keys=.., etc.))
+
 class WebsocketClient:
     def __init__(self,
                  url="wss://ws-feed.pro.coinbase.com",
-                 products=None,
                  message_type="subscribe",
                  mongo_collection=None,
-                 should_print=True,
+                 should_print=False,
                  auth=False,
                  api_key="",
                  api_secret="",
                  api_passphrase="",
-                 channels=None,
+                 products,
+                 channels,
                  thread_name='WebsocketClient',
                  keepalive_thread_name='WebsocketClientKeepAlive'):
 
@@ -62,18 +66,13 @@ class WebsocketClient:
         self.thread.start()
 
     def _connect(self):
-        if self.products is None:
-            self.products = ["BTC-USD"]
-        elif not isinstance(self.products, list):
+        if not isinstance(self.products, list):
             self.products = [self.products]
 
         if self.url[-1] == "/":
             self.url = self.url[:-1]
 
-        if self.channels is None:
-            sub_params = {'type': 'subscribe', 'product_ids': self.products}
-        else:
-            sub_params = {'type': 'subscribe', 'product_ids': self.products, 'channels': self.channels}
+        sub_params = {'type': 'subscribe', 'product_ids': self.products, 'channels': self.channels}
 
         if self.auth:
             timestamp = str(time.time())
@@ -98,6 +97,10 @@ class WebsocketClient:
         while not self.stop:
             try:
                 data = self.ws.recv()
+                # poly: we need a message to be an instance of the message class
+                # poly: then, whatver exchange we use, we have access to same
+                # poly: attributes like msg.created_at, msg.type (buy or sell), etc.
+                # poly: despite them being called differently in all these exchanges
                 msg = json.loads(data)
             except ValueError as e:
                 self.on_error(e)
@@ -123,18 +126,18 @@ class WebsocketClient:
         self.thread.join()
 
     def on_open(self):
-        if self.should_print:
-            print("-- Subscribed! --\n")
+        # if self.should_print:
+        print("-- Subscribed! --\n")
 
     def on_close(self):
-        if self.should_print:
-            print("\n-- Socket Closed --")
+        # if self.should_print:
+        print("\n-- Socket Closed --")
 
     def on_message(self, msg):
         if self.should_print:
             print(msg)
-        if self.mongo_collection:  # dump JSON to given mongo collection
-            self.mongo_collection.insert_one(msg)
+        # if self.mongo_collection:  # dump JSON to given mongo collection
+        #     self.mongo_collection.insert_one(msg)
 
     def on_error(self, e, data=None):
         self.error = e
